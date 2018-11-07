@@ -1,34 +1,37 @@
+import utils.ConfigHelper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
-public class ComicLinkList {
+/**
+ * @author trafalgar
+ */
+public class ComicUrlList {
 
-    private HashMap<String, String> comicMap = new HashMap<>();
+    private LinkedHashMap<String, String> comicMap = new LinkedHashMap<>();
 
     private LinkedList<String> indexList = new LinkedList<>();
 
     private LinkedList<String> imageList = new LinkedList<>();
 
-    private static volatile ComicLinkList comicLinkList = null;
+    private static volatile ComicUrlList comicUrlList = null;
 
-    private ComicLinkList() throws IOException {
-    }
-
-    public static ComicLinkList getInstance() throws IOException {
-        if (comicLinkList == null) {
-            synchronized (ComicLinkList.class) {
-                if (comicLinkList == null) {
-                    comicLinkList = new ComicLinkList();
-                    return comicLinkList;
+    public static ComicUrlList getInstance() {
+        if (comicUrlList == null) {
+            synchronized (ComicUrlList.class) {
+                if (comicUrlList == null) {
+                    comicUrlList = new ComicUrlList();
+                    return comicUrlList;
                 }
             }
         }
-        return comicLinkList;
+        return comicUrlList;
     }
 
     public HashMap<String, String> initComicMap(URL originUrl) throws IOException {
@@ -44,7 +47,8 @@ public class ComicLinkList {
 
         String data = br.readLine();
         while (data != null) {
-            if (data.indexOf("Permalink to") != -1 && data.indexOf("bookmark") != -1) {
+            if (data.contains(ConfigHelper.getComicNameFeature()[0]) &&
+                    data.contains(ConfigHelper.getComicNameFeature()[1])) {
                 int comicBegin = data.indexOf("href=");
                 int comicEnd = data.indexOf("title");
                 String comicLink = data.substring(comicBegin + 6, comicEnd - 2);
@@ -53,6 +57,7 @@ public class ComicLinkList {
                 int titleEnd = data.indexOf("\"");
                 String title = data.substring(13, titleEnd);
                 if (!comicMap.containsKey(title)) {
+                    System.out.println(title + "   " + comicLink);
                     comicMap.put(title, comicLink);
                 }
             }
@@ -86,11 +91,11 @@ public class ComicLinkList {
 
         String data = br.readLine();
         while (data != null) {
-            if (data.indexOf("single-navi") != -1) {
-                while (data.indexOf("href=") != -1) {
-                    int begin = data.indexOf("href=");
+            if (data.contains(ConfigHelper.getIndexBeginFeature())) {
+                while (data.contains(ConfigHelper.getIndexUrlFeature()[0])) {
+                    int begin = data.indexOf(ConfigHelper.getIndexUrlFeature()[0]);
                     data = data.substring(begin);
-                    int end = data.indexOf("span");
+                    int end = data.indexOf(ConfigHelper.getIndexUrlFeature()[1]);
                     if (end == -1) {
                         break;
                     }
@@ -125,7 +130,7 @@ public class ComicLinkList {
 
         String data = br.readLine();
         while (data != null) {
-            if (data.indexOf("alignnone") != -1) {
+            if (data.contains(ConfigHelper.getImageFeature())) {
                 int begin = data.indexOf("src=");
                 int end = data.indexOf("alt");
 

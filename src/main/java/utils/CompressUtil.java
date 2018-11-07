@@ -1,9 +1,14 @@
+package utils;
+
 import java.io.*;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * @author trafalgar
+ */
 public class CompressUtil {
     static final int BUFFER = 8192;
 
@@ -66,7 +71,7 @@ public class CompressUtil {
             ZipEntry entry = new ZipEntry(baseDir + file.getName());
             zipOut.putNextEntry(entry);
             int count;
-            byte data[] = new byte[BUFFER];
+            byte[] data = new byte[BUFFER];
             while ((count = bis.read(data, 0, BUFFER)) != -1) {
                 zipOut.write(data, 0, count);
             }

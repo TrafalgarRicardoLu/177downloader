@@ -7,13 +7,21 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.LinkedList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * @author trafalgar
+ */
 public class ImageDownloader implements Runnable {
 
-    private volatile static int count = 1;
-    private volatile Object[] imageArray;
-    private volatile String comicPath;
+    private volatile int count = 1;
+    private Object[] imageArray;
+    private String comicPath;
     private volatile int imageCount;
+
+    private static ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private static Lock writeLock = readWriteLock.writeLock();
 
     ImageDownloader(LinkedList<String> imageList, String comicPath) {
         this.imageArray = imageList.toArray();
@@ -21,7 +29,7 @@ public class ImageDownloader implements Runnable {
         this.imageCount = imageArray.length;
     }
 
-    private boolean downloadImage(URL imageUrl, String imagePath) throws IOException {
+    private void downloadImage(URL imageUrl, String imagePath) throws IOException {
         System.setProperty("http.agent", "Chrome");
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 1080));
 
@@ -29,7 +37,7 @@ public class ImageDownloader implements Runnable {
         connection.setRequestMethod("GET");
         InputStream is = connection.getInputStream();
 
-        byte[] bs = new byte[2048];
+        byte[] bs = new byte[1024];
         int len;
         FileOutputStream os = new FileOutputStream(imagePath);
         while ((len = is.read(bs)) != -1) {
@@ -38,15 +46,12 @@ public class ImageDownloader implements Runnable {
 
         os.close();
         is.close();
-
-        return true;
     }
-
 
     @Override
     public void run() {
-        for (; count < imageCount;) {
-            String imageLink = (String) imageArray[count-1];
+        while (count < imageCount) {
+            String imageLink = (String) imageArray[count - 1];
             String imagePath = comicPath + "/" + count + ".jpg";
             File imageFile = new File(imagePath);
 
@@ -57,8 +62,10 @@ public class ImageDownloader implements Runnable {
                     e.printStackTrace();
                 }
                 try {
+                    writeLock.lock();
                     System.out.println(count + "/" + imageCount + " " + imageLink);
                     downloadImage(new URL(imageLink), imagePath);
+                    writeLock.unlock();
                     count++;
                 } catch (IOException e) {
                     e.printStackTrace();
