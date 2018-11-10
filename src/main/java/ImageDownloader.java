@@ -16,12 +16,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class ImageDownloader implements Runnable {
 
     private volatile int count = 1;
-    private Object[] imageArray;
+    private volatile Object[] imageArray;
     private String comicPath;
     private volatile int imageCount;
-
-    private static ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-    private static Lock writeLock = readWriteLock.writeLock();
 
     ImageDownloader(LinkedList<String> imageList, String comicPath) {
         this.imageArray = imageList.toArray();
@@ -62,10 +59,8 @@ public class ImageDownloader implements Runnable {
                     e.printStackTrace();
                 }
                 try {
-                    writeLock.lock();
                     System.out.println(count + "/" + imageCount + " " + imageLink);
                     downloadImage(new URL(imageLink), imagePath);
-                    writeLock.unlock();
                     count++;
                 } catch (IOException e) {
                     e.printStackTrace();
