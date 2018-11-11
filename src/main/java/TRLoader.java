@@ -1,3 +1,5 @@
+import entity.ComicInfo;
+import entity.ComicList;
 import org.apache.commons.codec.digest.DigestUtils;
 import utils.CompressUtil;
 import utils.ConfigHelper;
@@ -11,20 +13,19 @@ import java.util.*;
  */
 public class TRLoader {
 
-    private static ComicUrlList comicUrlList = ComicUrlList.getInstance();
+    private static ComicList comicList = ComicList.getInstance();
     private static String downloadPath = ConfigHelper.getDownloadPath();
 
     private void download(String url, Integer index, Integer count) throws IOException, InterruptedException {
         URL originUrl = new URL(url);
-        HashMap comicMap = comicUrlList.initComicMap(originUrl);
-        Set<String> keySet = comicMap.keySet();
+        LinkedList<ComicInfo> comicInfoList = comicList.initComicList(originUrl);
 
         int comicCount = 0;
         int indexTemp = 1;
-        count = (count == null) ? keySet.size() : count;
+        count = (count == null) ? comicInfoList.size() : count;
         count = (index == null) ? count : 1;
 
-        for (String comicName : keySet) {
+        for (ComicInfo comicInfo : comicInfoList) {
             if (comicCount >= count) {
                 System.out.println(comicCount + "comics have been downloaded");
                 return;
@@ -35,24 +36,24 @@ public class TRLoader {
                 continue;
             }
 
-            URL comicUrl = new URL((String) comicMap.get(comicName));
+            URL comicUrl = new URL(comicInfo.getComicUrl());
 
-            System.out.println("\nComic: " + comicName + "\n" + "Link: " + comicUrl.toString() + "\n");
+            System.out.println("\nComic: " + comicInfo.getComicName() + "\n" + "Link: " + comicUrl.toString() + "\n");
             System.out.println("Collecting Index");
 
-            LinkedList<String> indexList = comicUrlList.initIndexList(comicUrl);
+            LinkedList<String> indexList = comicList.initIndexList(comicUrl);
             LinkedList<String> imageList = null;
 
-            File comicFolder = new File(downloadPath + comicName + "\\");
+            File comicFolder = new File(downloadPath + comicInfo.getComicName() + "\\");
             if (!comicFolder.exists()) {
                 comicFolder.mkdir();
             }
 
             for (String indexLink : indexList) {
-                imageList = comicUrlList.initImageList(new URL(indexLink));
+                imageList = comicList.initImageList(new URL(indexLink));
             }
 
-            System.out.println("\n" + "Downloading " + comicName);
+            System.out.println("\n" + "Downloading " + comicInfo.getComicName());
 
             ImageDownloader id = new ImageDownloader(imageList, comicFolder.toString());
 
@@ -73,11 +74,11 @@ public class TRLoader {
             id4.join();
             id5.join();
 
-            CompressUtil.compress(comicFolder.toString(), DigestUtils.md5Hex(comicName) + ".zip");
+            CompressUtil.compress(comicFolder.toString(), DigestUtils.md5Hex(comicInfo.getComicName()) + ".zip");
 
             indexList.clear();
             imageList.clear();
-            System.out.println("zip " + comicName + " finished!\n");
+            System.out.println("zip " + comicInfo.getComicName() + " finished!\n");
 
             File[] children = comicFolder.listFiles();
             for (File child : children) {
@@ -91,15 +92,15 @@ public class TRLoader {
     }
 
     public void downloadByIndex(int index) throws IOException, InterruptedException {
-        download("http://www.177pic.info/html/category/tt", index, null);
+        download(ConfigHelper.getIndexUrl(), index, null);
     }
 
     public void downloadByCount(int count) throws IOException, InterruptedException {
-        download("http://www.177pic.info/html/category/tt", null, count);
+        download(ConfigHelper.getIndexUrl(), null, count);
     }
 
     public void downloadAll() throws IOException, InterruptedException {
-        download("http://www.177pic.info/html/category/tt", null, null);
+        download(ConfigHelper.getIndexUrl(), null, null);
     }
 
 }
