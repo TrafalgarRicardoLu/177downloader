@@ -1,3 +1,5 @@
+package controller;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -6,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -20,7 +23,7 @@ public class ImageDownloader implements Runnable {
     private String comicPath;
     private volatile int imageCount;
 
-    ImageDownloader(LinkedList<String> imageList, String comicPath) {
+    ImageDownloader(ArrayList<String> imageList, String comicPath) {
         this.imageArray = imageList.toArray();
         this.comicPath = comicPath;
         this.imageCount = imageArray.length;
@@ -67,9 +70,5 @@ public class ImageDownloader implements Runnable {
                 }
             }
         }
-    }
-
-    public int getCount() {
-        return count;
     }
 }
