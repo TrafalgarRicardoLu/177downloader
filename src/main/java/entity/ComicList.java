@@ -7,17 +7,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
  * @author trafalgar
  */
 public class ComicList {
-    private LinkedList<ComicInfo> comicInfoList = new LinkedList<>();
+    private ArrayList<ComicInfo> comicInfoList = new ArrayList<>();
 
-    private LinkedList<String> indexList = new LinkedList<>();
+    private ArrayList<String> indexList = new ArrayList<>();
 
-    private LinkedList<String> imageList = new LinkedList<>();
+    private ArrayList<String> imageList = new ArrayList<>();
 
     private static volatile ComicList comicList = null;
 
@@ -33,7 +34,7 @@ public class ComicList {
         return comicList;
     }
 
-    public LinkedList<ComicInfo> initComicList(URL originUrl) throws IOException {
+    public ArrayList<ComicInfo> initComicInfoList(URL originUrl) throws IOException {
         System.setProperty("http.agent", "Chrome");
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 1080));
 
@@ -73,7 +74,7 @@ public class ComicList {
         return comicInfoList;
     }
 
-    public LinkedList<String> initIndexList(URL comicUrl) throws IOException {
+    public ArrayList<String> initIndexList(URL comicUrl) throws IOException {
 
         System.setProperty("http.agent", "Chrome");
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 1080));
@@ -117,7 +118,7 @@ public class ComicList {
         return indexList;
     }
 
-    public LinkedList<String> initImageList(URL indexUrl) throws IOException {
+    public ArrayList<String> initImageList(URL indexUrl) throws IOException {
         System.setProperty("http.agent", "Chrome");
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 1080));
 
