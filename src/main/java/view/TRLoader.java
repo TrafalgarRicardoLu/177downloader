@@ -1,5 +1,4 @@
 package view;
-import com.jfoenix.controls.JFXListView;
 import entity.ComicInfo;
 import entity.ComicList;
 import javafx.application.Application;
@@ -18,7 +17,7 @@ import java.util.*;
 
 public class TRLoader extends Application {
 
-    private static ComicList comicList = ComicList.getInstance();
+    private ComicList comicList = ComicList.getInstance();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -27,7 +26,7 @@ public class TRLoader extends Application {
 
         ObservableList comicList = FXCollections.observableArrayList(comicInfoList);
 
-        ListView comicListView = new JFXListView();
+        ListView comicListView = new ListView();
         comicListView.setItems(comicList);
         comicListView.setCellFactory(new Callback<ListView<ComicInfo>, ListCell<ComicInfo>>() {
             @Override
@@ -46,6 +45,8 @@ public class TRLoader extends Application {
         primaryStage.setTitle("TRLoader");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        System.gc();
     }
 
     public static void main(String[] args) {

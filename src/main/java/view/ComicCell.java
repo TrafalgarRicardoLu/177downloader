@@ -1,11 +1,10 @@
 package view;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXListCell;
 import controller.ComicDownloader;
 import entity.ComicInfo;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -19,7 +18,6 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 
 public class ComicCell extends ListCell<ComicInfo> {
-    ComicDownloader comicDownloader = new ComicDownloader();
     Button downloadButton = new Button("Download");
     Label comicName = null;
     Image comicCoverImage = null;
@@ -27,17 +25,24 @@ public class ComicCell extends ListCell<ComicInfo> {
 
     @Override
     protected void updateItem(ComicInfo item, boolean empty) {
+        super.updateItem(item, empty);
         if (item != null) {
             comicName = new Label(item.getComicName());
+            comicName.setWrapText(true);
+            comicName.setMaxWidth(300);
+
             comicCoverImage = new Image(item.getComicCover());
             comicCover = new ImageView(comicCoverImage);
             comicCover.setFitWidth(250);
             comicCover.setFitHeight(350);
-            downloadButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            comicCover.setCache(true);
+            comicCover.setCacheHint(CacheHint.SPEED);
+
+            downloadButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     try {
-                        comicDownloader.downloadByPage(item);
+                        ComicDownloader.downloadByPage(item);
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {
@@ -46,17 +51,24 @@ public class ComicCell extends ListCell<ComicInfo> {
                 }
             });
 
+
             VBox leftView = new VBox();
 
             StackPane buttonCenter = new StackPane();
+            buttonCenter.setMinWidth(300);
+            downloadButton.setAlignment(Pos.CENTER);
             buttonCenter.getChildren().add(downloadButton);
 
+            leftView.setMaxSize(300,350);
             leftView.getChildren().addAll(comicName, buttonCenter);
 
             HBox root = new HBox();
-            root.getChildren().addAll(comicCover, leftView);
+            root.setMaxSize(600,350);
+            root.getChildren().addAll(comicCover,leftView);
 
             setGraphic(root);
+
+            System.gc();
         }
     }
 }

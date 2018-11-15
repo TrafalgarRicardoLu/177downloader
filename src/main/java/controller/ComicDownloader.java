@@ -3,7 +3,6 @@ package controller;
 import entity.ComicInfo;
 import entity.ComicList;
 import org.apache.commons.codec.digest.DigestUtils;
-import controller.ImageDownloader;
 import utils.CompressUtil;
 import utils.ConfigHelper;
 
@@ -106,7 +105,7 @@ public class ComicDownloader {
         download(ConfigHelper.getIndexUrl(), null, null);
     }
 
-    public void downloadByPage(ComicInfo comicInfo) throws IOException, InterruptedException {
+    public static void downloadByPage(ComicInfo comicInfo) throws IOException, InterruptedException {
         URL comicUrl = new URL(comicInfo.getComicUrl());
 
         System.out.println("\nComic: " + comicInfo.getComicName() + "\n" + "Link: " + comicUrl.toString() + "\n");
