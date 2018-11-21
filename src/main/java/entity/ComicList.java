@@ -75,7 +75,6 @@ public class ComicList {
     }
 
     public ArrayList<String> initIndexList(URL comicUrl) throws IOException {
-
         System.setProperty("http.agent", "Chrome");
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 1080));
 

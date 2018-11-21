@@ -10,6 +10,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -18,7 +19,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class ImageDownloader implements Runnable {
 
-    private volatile int count = 1;
+    private AtomicInteger count = new AtomicInteger(1);
     private volatile Object[] imageArray;
     private String comicPath;
     private volatile int imageCount;
@@ -50,8 +51,8 @@ public class ImageDownloader implements Runnable {
 
     @Override
     public void run() {
-        while (count < imageCount) {
-            String imageLink = (String) imageArray[count - 1];
+        while (count.get() < imageCount) {
+            String imageLink = (String) imageArray[count.get() - 1];
             String imagePath = comicPath + "/" + count + ".jpg";
             File imageFile = new File(imagePath);
 
@@ -64,7 +65,7 @@ public class ImageDownloader implements Runnable {
                 try {
                     System.out.println(count + "/" + imageCount + " " + imageLink);
                     downloadImage(new URL(imageLink), imagePath);
-                    count++;
+                    count.incrementAndGet();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
