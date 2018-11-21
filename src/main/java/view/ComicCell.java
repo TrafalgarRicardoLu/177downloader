@@ -15,8 +15,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.io.IOException;
-
 public class ComicCell extends ListCell<ComicInfo> {
     Button downloadButton = new Button("Download");
     Label comicName = null;
@@ -41,12 +39,9 @@ public class ComicCell extends ListCell<ComicInfo> {
             downloadButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
-                    try {
-                        ComicDownloader.downloadByPage(item);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    if (!ComicDownloader.downloadQueue.contains(item)) {
+                        ComicDownloader.downloadQueue.add(item);
+                        downloadButton.setText("Downloading");
                     }
                 }
             });
@@ -59,12 +54,12 @@ public class ComicCell extends ListCell<ComicInfo> {
             downloadButton.setAlignment(Pos.CENTER);
             buttonCenter.getChildren().add(downloadButton);
 
-            leftView.setMaxSize(300,350);
+            leftView.setMaxSize(300, 350);
             leftView.getChildren().addAll(comicName, buttonCenter);
 
             HBox root = new HBox();
-            root.setMaxSize(600,350);
-            root.getChildren().addAll(comicCover,leftView);
+            root.setMaxSize(600, 350);
+            root.getChildren().addAll(comicCover, leftView);
 
             setGraphic(root);
 
