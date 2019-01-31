@@ -60,10 +60,10 @@ public class ComicDownloader implements Runnable {
         id5.join();
 
         CompressUtil.compress(comicFolder.toString(), ConfigHelper.getDownloadPath() + DigestUtils.md5Hex(comicInfo.getComicName()) + ".zip");
+        System.out.println("zip " + comicInfo.getComicName() + " finished!\n");
 
         indexList.clear();
         imageList.clear();
-        System.out.println("zip " + comicInfo.getComicName() + " finished!\n");
 
         File[] children = comicFolder.listFiles();
         for (File child : children) {

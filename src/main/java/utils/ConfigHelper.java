@@ -6,7 +6,7 @@ package utils;
 public class ConfigHelper {
     private static final String DOWNLOAD_PATH = System.getProperties().getProperty("user.home") + "\\Downloads\\";
 
-    private static final String INDEX_URL = "http://www.177piczz.info/html/category/tt";
+    private static final String INDEX_URL = "http://www.177pic.info/html/category/tt";
 
     private static final String COMIC_NAME_FEATURE = "disp_a";
 
