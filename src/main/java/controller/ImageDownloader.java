@@ -51,6 +51,7 @@ public class ImageDownloader implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("Begin"+Thread.currentThread());
         while (count.get() <= imageCount) {
             String imageLink = (String) imageArray[count.get() - 1];
             String imagePath = comicPath + "/" + count + ".jpg";
@@ -65,6 +66,8 @@ public class ImageDownloader implements Runnable {
                     e.printStackTrace();
                 }
             }
+            if(count.get()==imageCount)
+                break;
         }
         System.out.println("Finished"+Thread.currentThread());
     }
