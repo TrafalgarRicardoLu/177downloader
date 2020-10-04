@@ -1,5 +1,7 @@
 package controller;
 
+import utils.ConfigHelper;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,6 +12,8 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -23,6 +27,7 @@ public class ImageDownloader implements Runnable {
     private volatile Object[] imageArray;
     private String comicPath;
     private volatile int imageCount;
+    private CyclicBarrier barrier = new CyclicBarrier(ConfigHelper.getThreadNumber());
 
     ImageDownloader(ArrayList<String> imageList, String comicPath) {
         this.imageArray = imageList.toArray();
@@ -70,5 +75,11 @@ public class ImageDownloader implements Runnable {
                 break;
         }
         System.out.println("Finished"+Thread.currentThread());
+
+        try {
+            barrier.await();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

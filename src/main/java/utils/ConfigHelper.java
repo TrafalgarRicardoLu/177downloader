@@ -16,6 +16,8 @@ public class ConfigHelper {
 
     private static final String IMAGE_FEATURE ="alignnone";
 
+    private static final int THREAD_NUMBER=5;
+
     public static String getDownloadPath() {
         return DOWNLOAD_PATH;
     }
@@ -39,4 +41,6 @@ public class ConfigHelper {
     public static String getIndexUrl() {
         return INDEX_URL;
     }
+
+    public static int getThreadNumber(){return THREAD_NUMBER;}
 }

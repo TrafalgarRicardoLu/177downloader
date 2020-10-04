@@ -10,6 +10,8 @@ import utils.ConfigHelper;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * @author trafalgar
@@ -40,24 +42,10 @@ public class ComicDownloader implements Runnable {
 
         System.out.println("\n" + "Downloading " + comicInfo.getComicName());
 
-        ImageDownloader id = new ImageDownloader(imageList, comicFolder.toString());
-
-        Thread id1 = new Thread(id);
-        id1.start();
-        Thread id2 = new Thread(id);
-        id2.start();
-        Thread id3 = new Thread(id);
-        id3.start();
-        Thread id4 = new Thread(id);
-        id4.start();
-        Thread id5 = new Thread(id);
-        id5.start();
-
-        id1.join();
-        id2.join();
-        id3.join();
-        id4.join();
-        id5.join();
+        Executor executor = Executors.newFixedThreadPool(ConfigHelper.getThreadNumber());
+        for(int i=0;i<5;i++){
+            executor.execute(new ImageDownloader(imageList,comicFolder.toString()));
+        }
 
         CompressUtil.compress(comicFolder.toString(), ConfigHelper.getDownloadPath() + DigestUtils.md5Hex(comicInfo.getComicName()) + ".zip");
         System.out.println("zip " + comicInfo.getComicName() + " finished!\n");
